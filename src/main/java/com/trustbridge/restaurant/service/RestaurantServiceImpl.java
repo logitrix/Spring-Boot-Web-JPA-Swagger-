@@ -36,11 +36,13 @@ public class RestaurantServiceImpl implements RestaurantService {
 	OrderRepository orderRepository;
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
 	public List<Product> getProducts() {
 		return productRepository.findAll();
 	}
 	
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
 	public TransactionResponse viewOrder(String referenceNumber) throws Exception {
 		if (referenceNumber == null || referenceNumber.trim().isEmpty()) {
 			throw new Exception("Please add reference number!");
@@ -72,6 +74,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
 	public TransactionResponse sendOrder(TransactionRequest request) throws Exception {
 		
 		Transaction txn = new Transaction();
