@@ -9,6 +9,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.trustbridge.restaurant.bean.Order;
@@ -106,6 +108,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 	}
 	
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
 	public TransactionResponse updateOrder(TransactionRequest request) throws Exception {
 		
 		if (request.getReferenceNumber() == null || request.getReferenceNumber().trim().isEmpty()) {
@@ -153,6 +156,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 	}
 	
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
 	public TransactionResponse cancelOrder(String referenceNumber) throws Exception {
 		
 		if (referenceNumber == null || referenceNumber.trim().isEmpty()) {
@@ -168,6 +172,15 @@ public class RestaurantServiceImpl implements RestaurantService {
 		}
 		
 		List<Order> orders = orderRepository.findByReferenceNumber(referenceNumber);
+		for (int i = 0; i < orders.size() ; i++) {
+			Product product = (Product) productRepository.findById(orders.get(i).getProductId()).orElse(null);;
+			if(product != null) {
+				orders.get(i).setProductName(product.getName());
+				orders.get(i).setDescription(product.getDescription());
+			} else {
+				throw new Exception("Product ID " + orders.get(i).getProductId() +" doesn't exist!");
+			}
+		}
 		
 		txn.setStatus(Constant.STATUS_CANCEL);
 		txn.setDate(Date.valueOf(LocalDate.now()));

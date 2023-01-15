@@ -35,4 +35,15 @@ springdoc-openapi-ui 1.2.32
 # Access in the browser 'http://localhost:8080/swagger-ui/index.html'
 # Use API Doc Path '/dann-restaurant-openapi'
 
+# Example use endpoint 'http://localhost:8080/dann-resto/order' (POST)
+# name could be email address / email addresses of the tourist/s who ordered
+# id can be referred from endpoint 'http://localhost:8080/dann-resto/get-products' (GET) 
+{
+    "name":"Pedro 123",
+    "orders": [
+        {"id": 1},{"id": 2},{"id": 3}
+    ]
+}
+
+
 
